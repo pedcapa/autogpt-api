@@ -5,6 +5,7 @@ import (
   "github.com/gofiber/fiber/v2/middleware/logger"
   "log"
   "autogpt-api/handlers"
+  "fmt"
 )
 
 func main() {
@@ -15,6 +16,12 @@ func main() {
     ServerHeader: "Fiber",
     AppName: "autoGPT API v1.0.0",
   })
+  
+  if !fiber.IsChild() {
+    fmt.Println("I'm the parent process")
+  } else {
+    fmt.Println("I'm a child process")
+  }
 
   // Middleware to log requests
   app.Use(logger.New())
