@@ -9,7 +9,12 @@ import (
 
 func main() {
 
-  app := fiber.New()
+  app := fiber.New(fiber.Config{
+    Prefork: true,
+    CaseSensitive: true,
+    ServerHeader: "Fiber",
+    AppName: "autoGPT API v1.0.0",
+  })
 
   // Middleware to log requests
   app.Use(logger.New())
