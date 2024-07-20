@@ -30,10 +30,11 @@ func main() {
   app.Get("/", func(c *fiber.Ctx) error {
     return c.SendString("Hello World")
   })
-
-  app.Get("/openai", handlers.OpenAIHandler)
-  app.Get("/gemini", handlers.GeminiHandler)
-  app.Get("/claude", handlers.ClaudeHandler)
+  
+  app.Get("/brain", handlers.OpenAIBrain)
+  app.Post("/openai", handlers.OpenAIHandler)
+  app.Post("/google", handlers.GoogleHandler)
+  app.Post("/anthropic", handlers.AnthropicHandler)
   app.Get("/whisper", handlers.WhisperHandler)
 
   // Init server
