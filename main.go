@@ -14,7 +14,7 @@ func main() {
     Prefork: true,
     CaseSensitive: true,
     ServerHeader: "Fiber",
-    AppName: "autoGPT API v1.0.0",
+    AppName: "autoGPT API v1.0.1",
   })
   
   if !fiber.IsChild() {
