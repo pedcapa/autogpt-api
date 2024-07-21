@@ -17,6 +17,7 @@ type OAIMessage struct {
 type OAIRequestBody struct {
   Model string `json:"model"`
   Messages []OAIMessage `json:"messages"`
+  ResponseFormat string `json:"response_format"`
 }
 
 func OpenAIHandler(c *fiber.Ctx) error {

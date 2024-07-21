@@ -27,6 +27,7 @@ func GoogleHandler(c *fiber.Ctx) error {
   // Read request body
   var requestBody struct {
     Model string `json:"model"`
+    ResponseMIMEType string `json:"responseMimeType"`
     Contents []Content `json:"contents"`
   }
 
