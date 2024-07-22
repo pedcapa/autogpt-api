@@ -1,0 +1,122 @@
+{
+  "openai": {
+    "models": {
+      "gpt-4o": {
+        "description": "The best openai's model",
+        "price_per_1million_tokens": {
+          "input": 5.0,
+          "output": 2.5
+        },
+        "benchmarks-scores": {
+          "MMLU": 88.7,
+          "GPQA": 53.6,
+          "MATH": 76.6,
+          "HumanEval": 90.2,
+          "MGSM": 90.5,
+          "DROP": 83.4,
+          "MMMU": 69.1
+        }
+      }
+      "gpt-4o-mini": {
+        "description": "Most cost-efficient openai's small model",
+        "price_per_1million_tokens": {
+          "input": 0.150,
+          "output": 0.075
+        },
+        "benchmarks-scores": {
+          "MMLU": 82.0,
+          "GPQA": 40.2,
+          "MATH": 70.2,
+          "HumanEval": 87.2,
+          "MGSM": 87.0,
+          "DROP": 79.7,
+          "MMMU": 59.4
+        }
+      }
+    }
+  },
+  "google": {
+    "models": {
+      "gemini-1.5-pro": {
+        "description": "The best google's model",
+        "price_per_1million_tokens": {
+          "input": {
+            "prompts-up-to-128k-tokens": 3.5,
+            "prompts-longer-than-128k-tokens": 7
+          },
+          "output": {
+            "prompts-up-to-128k-tokens": 10.5,
+            "prompts-longer-than-128k-tokens": 21.0
+          }
+        },
+        "benchmarks-scores": {  // based on google's paper
+          "MMLU": 85.9, // Representation in 57 subjects (incl. STEM, humanities, and others)
+          "GPQA": 46.2, // Challenging dataset of questions written by domain experts in biology, physics, and chemistry
+          "MATH": 67.7, // Challenging math problems (incl. algebra, geometry, pre-calculus, and others)
+          "HumanEval": 84.1,  // Code generation correctness
+          "MGSM": 87.5, //
+          "DROP": 74.9, //
+          "MMMU": 62.2 // Multi-discipine college-level reasoning problems
+        }
+      },
+      "gemini-1.5-flash": {
+        "description": "Most cost-efficient google's small model",
+        "price_per_1million_tokens": {
+          "input": {
+            "prompts-up-to-128k-tokens": 0.35,
+            "prompts-longer-than-128k-tokens": 0.7
+          },
+          "output": {
+            "prompts-up-to-128k-tokens": 1.05,
+            "prompts-longer-than-128k-tokens": 2.1
+          }
+        },
+        "benchmarks-scores": {
+          "MMLU": 78.9,
+          "GPQA": 39.5,
+          "MATH": 54.9,
+          "HumanEval": 74.3,
+          "MGSM": 82.6,  
+          "DROP": 78.4,
+          "MMMU": 56.1
+        }
+      }
+    }
+  },
+  "anthropic": {
+    "models": {
+      "claude-3-5-sonnet-20240620": {
+        "description": "The best anthropic's model",
+        "price_per_1million_tokens": {
+          "input": 3,
+          "output": 15
+        },
+        "benchmarks-scores": {
+          "MMLU": 88.3,
+          "GPQA": 59.4,
+          "MATH": 71.1,
+          "HumanEval": 92,
+          "MGSM": 91.6,
+          "DROP": 87.1,
+          "MMMU": 68.3
+        }
+      },
+      "claude-3-haiku-20240307": {
+        "description": "Most cost-efficient anthropic's small model",
+        "price_per_1million_tokens": {
+          "input": 0.25,
+          "output": 1.25
+        },
+        "benchmarks-scores": {
+          "MMLU": 75.2,
+          "GPQA": 33.3,
+          "MATH": 40.9,
+          "HumanEval": 75.9,
+          "MGSM": 76.5,
+          "DROP": 78.4,
+          "MMMU": "NA"
+        }
+      }
+    }
+  }
+}
