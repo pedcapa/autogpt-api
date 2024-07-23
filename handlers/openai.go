@@ -25,30 +25,30 @@ type ResponseFormat struct {
 }
 
 func OpenAIResponseJSON(requestBody OAIRequestBody) ([]byte, int, error) {
-	// Configurar el API key y la URL de OpenAI
+	// Set openai API key and endpoint
 	OAIKey := os.Getenv("OPENAI_API_KEY")
 	if OAIKey == "" {
 		return nil, http.StatusInternalServerError, fiber.NewError(fiber.StatusInternalServerError, "OPENAI_API_KEY is not set")
 	}
 	url := "https://api.openai.com/v1/chat/completions"
 
-	// Convertir el cuerpo de la solicitud a JSON
+	// Convert request body to JSON
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, http.StatusInternalServerError, fiber.NewError(fiber.StatusInternalServerError, "Error marshalling JSON")
 	}
 
-	// Crear la solicitud HTTP
+	// Make HTTP request
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, http.StatusInternalServerError, fiber.NewError(fiber.StatusInternalServerError, "Error creating request")
 	}
 
-	// Añadir headers
+	// Add headers
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+OAIKey)
 
-	// Enviar la solicitud
+	// Send request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -56,7 +56,7 @@ func OpenAIResponseJSON(requestBody OAIRequestBody) ([]byte, int, error) {
 	}
 	defer resp.Body.Close()
 
-	// Leer la respuesta
+	// Read response
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, http.StatusInternalServerError, fiber.NewError(fiber.StatusInternalServerError, "Error reading response")
@@ -66,7 +66,7 @@ func OpenAIResponseJSON(requestBody OAIRequestBody) ([]byte, int, error) {
 }
 
 func OpenAIHandler(c *fiber.Ctx) error {
-	// Leer datos del cuerpo de la solicitud
+	// Read request body
 	var requestBody struct {
 		Prompt     string `json:"prompt"`
 		Model      string `json:"model"`
@@ -78,13 +78,13 @@ func OpenAIHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	// Configurar valores por defecto
+	// Config default settings
 	outputJSON := true
 	if requestBody.OutputJSON != nil {
 		outputJSON = *requestBody.OutputJSON
 	}
 
-	// Crear el cuerpo de la solicitud para OpenAI
+	// Create openai' request body
 	oaiRequestBody := OAIRequestBody{
 		Model: requestBody.Model,
 		Messages: []OAIMessage{
@@ -98,7 +98,7 @@ func OpenAIHandler(c *fiber.Ctx) error {
 		}
 	}
 
-	// Hacer la solicitud a OpenAI
+	// Make openai' request
 	response, statusCode, err := OpenAIResponseJSON(oaiRequestBody)
 	if err != nil {
 		return c.Status(statusCode).JSON(fiber.Map{
@@ -106,7 +106,7 @@ func OpenAIHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	// Devolver la respuesta al cliente
+	// Return response
 	return c.Status(statusCode).Send(response)
 }
 
