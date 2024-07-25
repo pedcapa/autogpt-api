@@ -74,8 +74,8 @@ func OpenAIHandler(c *fiber.Ctx) error {
   // Read request body
   var requestBody struct {
     ID string `json:"id_user"`
-    Prompt     string `json:"prompt"`
-    Model      string `json:"model"`
+    Prompt string `json:"prompt"`
+    Model string `json:"model"`
     OutputJSON *bool  `json:"output_JSON"`
   }
   if err := c.BodyParser(&requestBody); err != nil {
