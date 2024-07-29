@@ -15,25 +15,6 @@ import (
   "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Part struct {
-  Text string `json:"text"`
-}
-
-type Content struct {
-  Role string `json:"role"`
-  Parts []Part `json:"parts"`
-}
-
-type GRequestBody struct {
-  Model string `json:"model"`
-  Contents []Content `json:"contents"`
-  GenerationConfig *GenerationConfig `json:"generationConfig,omitempty"`
-}
-
-type GenerationConfig struct {
-  ResponseMIMEType string `json:"response_mime_type"`
-}
-
 func GoogleResponseJSON(requestBody GRequestBody) ([]byte, int, error) {
   // Set the Google API key and endpoint
   GKey := os.Getenv("GEMINI_API_KEY")
@@ -78,31 +59,27 @@ func GoogleResponseJSON(requestBody GRequestBody) ([]byte, int, error) {
 
 func GoogleHandler(c *fiber.Ctx) error {
   // Read request body
-  var requestBody struct {
-    ID string `json:"id_user"`
-    Model string `json:"model"`
-    Contents []Content `json:"contents"`
-    OutputJSON *bool `json:"output_JSON"`
-  }
-
+  var requestBody RequestBody
   if err := c.BodyParser(&requestBody); err != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
       "error": "Cannot parse JSON",
     })
   }
 
-  // Config default settings
-  outputJSON := true
-  if requestBody.OutputJSON != nil {
-    outputJSON = *requestBody.OutputJSON
+  _, googleContents, err := processRequest(requestBody)
+  if err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": err.Error(),
+    })
   }
 
   // Create Google request body
   gRequestBody := GRequestBody{
     Model: requestBody.Model,
-    Contents: requestBody.Contents,
+    Contents: googleContents,
   }
-  if outputJSON {
+
+  if requestBody.OutputJSON != nil && *requestBody.OutputJSON {
     gRequestBody.GenerationConfig = &GenerationConfig{
       ResponseMIMEType: "application/json",
     }

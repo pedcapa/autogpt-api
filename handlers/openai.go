@@ -14,21 +14,6 @@ import (
   "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type OAIMessage struct {
-  Role string `json:"role"`
-  Content string `json:"content"`
-}
-
-type OAIRequestBody struct {
-  Model string `json:"model"`
-  Messages []OAIMessage `json:"messages"`
-  ResponseFormat *ResponseFormat `json:"response_format,omitempty"` // optional
-}
-
-type ResponseFormat struct {
-  Type string `json:"type"`
-}
-
 func OpenAIResponseJSON(requestBody OAIRequestBody) ([]byte, int, error) {
   // Set openai API key and endpoint
   OAIKey := os.Getenv("OPENAI_API_KEY")
@@ -71,39 +56,34 @@ func OpenAIResponseJSON(requestBody OAIRequestBody) ([]byte, int, error) {
 }
 
 func OpenAIHandler(c *fiber.Ctx) error {
-  // Read request body
-  var requestBody struct {
-    ID string `json:"id_user"`
-    Prompt string `json:"prompt"`
-    Model string `json:"model"`
-    OutputJSON *bool  `json:"output_JSON"`
-  }
+  // Read requestBody
+  var requestBody RequestBody
   if err := c.BodyParser(&requestBody); err != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
       "error": "Cannot parse JSON",
     })
   }
-
-  // Config default settings
-  outputJSON := true
-  if requestBody.OutputJSON != nil {
-    outputJSON = *requestBody.OutputJSON
+  
+  openAIMessages, _, err := processRequest(requestBody)
+  if err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": err.Error(),
+    })
   }
 
   // Create openai' request body
   oaiRequestBody := OAIRequestBody{
     Model: requestBody.Model,
-    Messages: []OAIMessage{
-      {Role: "system", Content: "You are a helpful assistant designed to output JSON."},
-      {Role: "user", Content: requestBody.Prompt},
-    },
+    Messages: openAIMessages,
   }
-  if outputJSON {
+
+  // Config default settings
+  if requestBody.OutputJSON != nil && *requestBody.OutputJSON {
     oaiRequestBody.ResponseFormat = &ResponseFormat{
       Type: "json_object",
     }
   }
-
+  
   // Make openai' request
   response, statusCode, err := OpenAIResponseJSON(oaiRequestBody)
   if err != nil {
