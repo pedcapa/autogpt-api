@@ -78,7 +78,7 @@ func OpenAIHandler(c *fiber.Ctx) error {
   }
 
   // Config default settings
-  if requestBody.OutputJSON != nil && *requestBody.OutputJSON {
+  if requestBody.OutputJSON == nil || *requestBody.OutputJSON {
     oaiRequestBody.ResponseFormat = &ResponseFormat{
       Type: "json_object",
     }

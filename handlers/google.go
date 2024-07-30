@@ -79,7 +79,7 @@ func GoogleHandler(c *fiber.Ctx) error {
     Contents: googleContents,
   }
 
-  if requestBody.OutputJSON != nil && *requestBody.OutputJSON {
+  if requestBody.OutputJSON == nil || *requestBody.OutputJSON {
     gRequestBody.GenerationConfig = &GenerationConfig{
       ResponseMIMEType: "application/json",
     }

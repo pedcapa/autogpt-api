@@ -64,7 +64,7 @@ func processRequest(body RequestBody) ([]OAIMessage, []Content, error) {
       systemPrompt = *body.SystemPrompt
     }
     
-    if body.OutputJSON != nil && *body.OutputJSON {
+    if body.OutputJSON == nil || *body.OutputJSON {
       systemPrompt += "\nResponse Format: JSON"
     }
 
@@ -78,8 +78,9 @@ func processRequest(body RequestBody) ([]OAIMessage, []Content, error) {
     googleContents = append(googleContents, Content{Role: "user", Parts: []Part{{Text: systemPrompt}}})
     googleContents = append(googleContents, Content{Role: "user", Parts: []Part{{Text: *body.Prompt}}})
   } else {
-    if body.OutputJSON != nil && *body.OutputJSON {
+    if body.OutputJSON == nil || *body.OutputJSON {
       openAIMessages = append(openAIMessages, OAIMessage{Role: "system", Content: "Response Format: JSON"})
+      googleContents = append(googleContents, Content{Role: "user", Parts: []Part{{Text: "Response Format: JSON"}}})
     }
 
     for _, msg := range body.Messages {
