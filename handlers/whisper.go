@@ -5,5 +5,5 @@ import (
 )
 
 func WhisperHandler(c *fiber.Ctx) error {
-  return c.SendString("Whisper Handler")
+  return c.SendString("Still working on this route\nWhisper Handler")
 }

@@ -11,7 +11,7 @@ func OpenAIBrain(c *fiber.Ctx) error {
   GKey := os.Getenv("GEMINI_API_KEY")
   ANTKey := os.Getenv("CLAUDE_API_KEY")
 
-  response := ""
+  response := "Still working on this route...\n"
 
   if OAIKey == "" {
     response += "OPENAI_API_KEY is not set"
