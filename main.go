@@ -11,7 +11,6 @@ import (
   "go.mongodb.org/mongo-driver/mongo/options"
 
   "autogpt-api/handlers"
-  "fmt"
 )
 
 var userCollection *mongo.Collection
