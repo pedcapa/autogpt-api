@@ -38,13 +38,7 @@ func main() {
     AppName: "autoGPT API v1.0.2",
   })
   
-  if !fiber.IsChild() {
-    fmt.Println("I'm the parent process")
-  } else {
-    fmt.Println("I'm a child process")
-  }
-
-  // Middleware to log requests
+    // Middleware to log requests
   app.Use(logger.New())
 
   // Pass userCollection to handlers
