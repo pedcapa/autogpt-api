@@ -34,10 +34,10 @@ func main() {
     Prefork: true,
     CaseSensitive: true,
     ServerHeader: "Fiber",
-    AppName: "autoGPT API v1.0.2",
+    AppName: "autoGPT API v1.1.0",
   })
   
-    // Middleware to log requests
+  // Middleware to log requests
   app.Use(logger.New())
 
   // Pass userCollection to handlers
