@@ -16,11 +16,11 @@
           "DROP": 83.4,
           "MMMU": 69.1
         }
-      }
+      },
       "gpt-4o-mini": {
         "description": "Most cost-efficient openai's small model",
         "price_per_1million_tokens": {
-          "input": 0.150,
+          "input": 0.15,
           "output": 0.075
         },
         "benchmarks-scores": {
@@ -40,43 +40,31 @@
       "gemini-1.5-pro": {
         "description": "The best google's model",
         "price_per_1million_tokens": {
-          "input": {
-            "prompts-up-to-128k-tokens": 3.5,
-            "prompts-longer-than-128k-tokens": 7
-          },
-          "output": {
-            "prompts-up-to-128k-tokens": 10.5,
-            "prompts-longer-than-128k-tokens": 21.0
-          }
+          "input": 3.5,
+          "output": 10.5
         },
-        "benchmarks-scores": {  // based on google's paper
-          "MMLU": 85.9, // Representation in 57 subjects (incl. STEM, humanities, and others)
-          "GPQA": 46.2, // Challenging dataset of questions written by domain experts in biology, physics, and chemistry
-          "MATH": 67.7, // Challenging math problems (incl. algebra, geometry, pre-calculus, and others)
-          "HumanEval": 84.1,  // Code generation correctness
-          "MGSM": 87.5, //
-          "DROP": 74.9, //
-          "MMMU": 62.2 // Multi-discipine college-level reasoning problems
+        "benchmarks-scores": {
+          "MMLU": 85.9,
+          "GPQA": 46.2,
+          "MATH": 67.7,
+          "HumanEval": 84.1,
+          "MGSM": 87.5,
+          "DROP": 74.9,
+          "MMMU": 62.2
         }
       },
       "gemini-1.5-flash": {
         "description": "Most cost-efficient google's small model",
         "price_per_1million_tokens": {
-          "input": {
-            "prompts-up-to-128k-tokens": 0.35,
-            "prompts-longer-than-128k-tokens": 0.7
-          },
-          "output": {
-            "prompts-up-to-128k-tokens": 1.05,
-            "prompts-longer-than-128k-tokens": 2.1
-          }
+          "input": 0.35,
+          "output": 1.05
         },
         "benchmarks-scores": {
           "MMLU": 78.9,
           "GPQA": 39.5,
           "MATH": 54.9,
           "HumanEval": 74.3,
-          "MGSM": 82.6,  
+          "MGSM": 82.6,
           "DROP": 78.4,
           "MMMU": 56.1
         }
