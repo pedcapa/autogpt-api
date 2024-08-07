@@ -3,6 +3,10 @@ package handlers
 import (
   "errors"
   "time"
+  "os"
+  "encoding/json"
+  "fmt"
+  "log"
 )
 
 type User struct {
@@ -95,6 +99,40 @@ func processRequest(body RequestBody) ([]OAIMessage, []Content, error) {
   }
 
   return openAIMessages, googleContents, nil
+}
+
+// Helper function to load model prices from models.json
+func getModelPrices(model string, company string) (float64, float64, error) {
+  var modelsData map[string]interface{}
+  modelsFile, err := os.ReadFile("services/models.json")
+  if err != nil {
+    log.Printf("Error reading models.json: %v", err)
+    return 0, 0, err
+  }
+  err = json.Unmarshal(modelsFile, &modelsData)
+  if err != nil {
+    log.Printf("Error unmarshalling models.json: %v", err)
+    return 0, 0, err
+  }
+
+  companyModels, companyExists := modelsData[company].(map[string]interface{})["models"].(map[string]interface{})
+  if !companyExists {
+    log.Printf("Company %s not found in models.json", company)
+    return 0, 0, fmt.Errorf("company not found")
+  }
+
+  modelData, modelExists := companyModels[model].(map[string]interface{})
+  if !modelExists {
+    log.Printf("Model %s not found in company %s", model, company)
+    return 0, 0, fmt.Errorf("model not found")
+  }
+  
+  pricePerTokens := modelData["price_per_1million_tokens"].(map[string]interface{})
+
+  inputPrice := pricePerTokens["input"].(float64)
+  outputPrice := pricePerTokens["output"].(float64)
+
+  return inputPrice, outputPrice, nil
 }
 
 // openai-specific structures
