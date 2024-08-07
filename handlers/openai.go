@@ -8,6 +8,9 @@ import (
   "net/http"
   "os"
   "io/ioutil"
+  "fmt"
+  "log"
+  "strings"
 
   "github.com/gofiber/fiber/v2"
   "go.mongodb.org/mongo-driver/bson"
@@ -63,7 +66,8 @@ func OpenAIHandler(c *fiber.Ctx) error {
       "error": "Cannot parse JSON",
     })
   }
-  
+ 
+  // Validate if the model belongs to openai
   openAIMessages, _, err := processRequest(requestBody)
   if err != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -92,6 +96,11 @@ func OpenAIHandler(c *fiber.Ctx) error {
     })
   }
 
+  // If request is not successful, don't update the database
+  if statusCode != http.StatusOK {
+    return c.Status(statusCode).Send(response)
+  }
+
   // Parse response to get token usage
   var openAIResponse struct {
     Usage struct {
@@ -106,11 +115,19 @@ func OpenAIHandler(c *fiber.Ctx) error {
     })
   }
 
-  // Calculate usage -----MAKE CHANGES-----
+  // Get model prices from models.json
+  inputPrice, outputPrice, err := getModelPrices(requestBody.Model, "openai")
+  if err != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+      "error": "Error getting model prices",
+    })
+  }
+
+  // Calculate usage 
   inputTokens := openAIResponse.Usage.PromptTokens
   outputTokens := openAIResponse.Usage.CompletionTokens
-  inputUsage := float64(inputTokens) * 0.0005 // example *change*
-  outputUsage := float64(outputTokens) * 0.00025 // example *change*
+  inputUsage := float64(inputTokens) * (inputPrice / 1000000)
+  outputUsage := float64(outputTokens) * (outputPrice / 1000000)
 
   // Update MongoDB
   ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -119,6 +136,18 @@ func OpenAIHandler(c *fiber.Ctx) error {
   userID := requestBody.ID
   filter := bson.M{"id_user": userID}
 
+  // Check if the user exists
+  var user User
+  err = userCollection.FindOne(ctx, filter).Decode(&user)
+  if err != nil {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "User not found",
+    })
+  }
+
+  // Ensure the model name with dot notation is handled properly
+  modelKey := fmt.Sprintf("openai.models.%s", strings.Replace(requestBody.Model, ".", "\u2024", -1))
+
 
   update := bson.M{
     "$inc": bson.M{
@@ -126,10 +155,10 @@ func OpenAIHandler(c *fiber.Ctx) error {
       "output_usage": outputUsage,
       "openai.input_usage": inputUsage,
       "openai.output_usage": outputUsage,
-      "openai.models." + requestBody.Model + ".input_tokens": inputTokens,
-      "openai.models." + requestBody.Model + ".output_tokens": outputTokens,
-      "openai.models." + requestBody.Model + ".input_usage": inputUsage,
-      "openai.models." + requestBody.Model + ".output_usage": outputUsage,
+      modelKey + ".input_tokens": inputTokens,
+      modelKey + ".output_tokens": outputTokens,
+      modelKey + ".input_usage":  inputUsage,
+      modelKey + ".output_usage": outputUsage,
     },
     "$push": bson.M{
       "history": History{
@@ -143,9 +172,10 @@ func OpenAIHandler(c *fiber.Ctx) error {
       },
     },
   }
-  opts := options.Update().SetUpsert(true)
+  opts := options.Update().SetUpsert(false)
   _, err = userCollection.UpdateOne(ctx, filter, update, opts)
   if err != nil {
+    log.Printf("%v", err)
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
       "error": "Error updating MongoDB",
     })
