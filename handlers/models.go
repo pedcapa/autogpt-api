@@ -2,7 +2,6 @@ package handlers
 
 import (
   "errors"
-  "time"
   "os"
   "encoding/json"
   "fmt"
@@ -39,7 +38,7 @@ type History struct {
   OutputTokens int `json:"output_tokens"`
   InputUsage float64 `json:"input_usage"`
   OutputUsage float64 `json:"output_usage"`
-  Created time.Time `json:"created"`
+  Created int64 `json:"created"`
 }
 
 // Structures and common functions

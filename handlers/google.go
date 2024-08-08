@@ -168,7 +168,7 @@ func GoogleHandler(c *fiber.Ctx) error {
         OutputTokens: outputTokens,
         InputUsage: inputUsage,
         OutputUsage: outputUsage,
-        Created: time.Now(),
+        Created: time.Now().Unix(),
       },
     },
   }

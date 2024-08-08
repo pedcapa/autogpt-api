@@ -148,7 +148,6 @@ func OpenAIHandler(c *fiber.Ctx) error {
   // Ensure the model name with dot notation is handled properly
   modelKey := fmt.Sprintf("openai.models.%s", strings.Replace(requestBody.Model, ".", "\u2024", -1))
 
-
   update := bson.M{
     "$inc": bson.M{
       "input_usage": inputUsage,
@@ -168,7 +167,7 @@ func OpenAIHandler(c *fiber.Ctx) error {
         OutputTokens: outputTokens,
         InputUsage: inputUsage,
         OutputUsage: outputUsage,
-        Created: time.Now(),
+        Created: time.Now().Unix(),
       },
     },
   }
