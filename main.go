@@ -4,6 +4,7 @@ import (
   "context"
   "log"
   "time"
+  "os"
 
   "github.com/gofiber/fiber/v2"
   "github.com/gofiber/fiber/v2/middleware/logger"
@@ -20,7 +21,9 @@ func main() {
   ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
   defer cancel()
 
-  clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+  mongodbURI := os.Getenv("MONGODB_URI")
+
+  clientOptions := options.Client().ApplyURI(mongodbURI)
   client, err := mongo.Connect(ctx, clientOptions)
   if err != nil {
     log.Fatal(err)
