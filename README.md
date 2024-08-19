@@ -110,4 +110,4 @@ This project is licensed under the Apache 2.0 License. See the [LICENSE](LICENSE
 
 ### Contact
 
-For questions or support, please [contact me](pedro@galliard.mx).
+For questions or support, please [contact me](mailto:pedro@galliard.mx).
